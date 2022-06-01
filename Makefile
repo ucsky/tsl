@@ -1,7 +1,6 @@
 SHELL := bash -i
 
 help:
-
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install.
