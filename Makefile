@@ -26,9 +26,9 @@ docker-build:
 
 
 DOCKER_CNAME := tsl
-docker-run: ## Run docker image.
-docker-run:
-	docker run --rm -v `pwd`:/workdir --name $(DOCKER_CNAME) $(DOCKER_INAME)
+docker-run-it: ## Run docker image.
+docker-run-it:
+	docker run -it --entrypoint /bin/bash --rm -v `pwd`:/workdir --name $(DOCKER_CNAME)  $(DOCKER_INAME)
 
 IMPUTATION := examples/imputation/run_imputation.py
 # 	&& export CUDA_VISIBLE_DEVICES="" \
