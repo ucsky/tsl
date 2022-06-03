@@ -36,4 +36,4 @@ test-imputation: ## Testing imputation.
 test-imputation:
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
-	&& python $(IMPUTATION) --epochs 10
+	&& python $(IMPUTATION) --epochs 1 --dataset-name air36
