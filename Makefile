@@ -19,10 +19,10 @@ start-lab:
 	&& conda activate tsl \
 	&& jupyter lab --no-browser
 
-IMPUTATION := examples/imputation/run_imputation.py 
+IMPUTATION := examples/imputation/run_imputation.py
+# 	&& export CUDA_VISIBLE_DEVICES="" \
 test-imputation: ## Testing imputation.
 test-imputation:
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
-	&& export CUDA_VISIBLE_DEVICES="" \
 	&& conda activate tsl \
-	&& python $(IMPUTATION)
+	&& python $(IMPUTATION) --epochs 10
