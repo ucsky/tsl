@@ -4,8 +4,8 @@ help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
 
-install: ## Install.
-install:
+conda-install: ## Install.
+conda-install:
 	(conda env list | grep tsl >> /dev/null || conda env create -f tsl_env.yml) \
 	&& conda activate tsl && python setup.py install \
 	&& pip install jupyterlab \
@@ -13,11 +13,22 @@ install:
 	&& jupyter nbextension enable --py widgetsnbextension
 
 
-start-lab: ## Start jupyterlab.
-start-lab:
+conda-startlab: ## Start jupyterlab.
+conda-startlab:
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
 	&& jupyter lab --no-browser
+
+DOCKER_INAME := tsl
+docker-build: ## Build docker image.
+docker-build:
+	docker build --tag $(DOCKER_INAME) . 
+
+
+DOCKER_CNAME := tsl
+docker-run: ## Run docker image.
+docker-run:
+	docker run --rm --name $(DOCKER_CNAME) $(DOCKER_INAME)
 
 IMPUTATION := examples/imputation/run_imputation.py
 # 	&& export CUDA_VISIBLE_DEVICES="" \
