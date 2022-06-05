@@ -1,8 +1,12 @@
-SHELL := bash -i
+.PHONY: help
+
+SHELL:=bash -i
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
+# Enable BuildKit for Docker build
+export DOCKER_BUILDKIT:=1
 
 conda-install: ## Install.
 conda-install:
@@ -19,18 +23,25 @@ conda-startlab:
 	&& conda activate tsl \
 	&& jupyter lab --no-browser
 
-DOCKER_INAME := tsl
+DOCKER_INAME:=tsl
 docker-build: ## Build docker image.
 docker-build:
-	docker build --tag $(DOCKER_INAME) . 
+	docker build \
+	--build-arg USER_ID=$$(id -u $$USER) \
+	--build-arg GROUP_ID=$$(id -g $$USER) \
+	--tag $(DOCKER_INAME) . 
 
 
-DOCKER_CNAME := tsl
+DOCKER_CNAME:=tsl
 docker-run-it: ## Run docker image.
 docker-run-it:
-	docker run -it --entrypoint /bin/bash --rm -v `pwd`:/workdir --name $(DOCKER_CNAME)  $(DOCKER_INAME)
+	docker run \
+	-it \
+	--entrypoint /bin/bash \
+	--rm  -v `pwd`:/workdir \
+	--name $(DOCKER_CNAME)  $(DOCKER_INAME)
 
-IMPUTATION := examples/imputation/run_imputation.py
+IMPUTATION:=examples/imputation/run_imputation.py
 
 
 test-imputation: ## Testing imputation.
