@@ -16,6 +16,9 @@ conda-install:
 	&& pip install ipywidgets \
 	&& jupyter nbextension enable --py widgetsnbextension
 
+conda-remove: ## Remove conda environment.
+conda-remove:
+	conda env remove -n tsl
 
 conda-startlab: ## Start jupyterlab.
 conda-startlab:
