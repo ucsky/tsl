@@ -22,8 +22,8 @@ RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
 RUN touch /opt/conda/envs/.conda_envs_dir_test
 RUN chown ${USER_ID}:${GROUP_ID} /opt/conda/envs/.conda_envs_dir_test
 RUN mkdir -p /opt/conda/pkgs
-#RUN touch /opt/conda/pkgs/urls.txt && chown 1001:1001 /opt/conda/pkgs/urls.txt
-RUN chown -R 1001:1001 /opt/conda/pkgs
+#RUN touch /opt/conda/pkgs/urls.txt && chown ${USER_ID}:${GROUP_ID} /opt/conda/pkgs/urls.txt
+RUN chown -R ${USER_ID}:${GROUP_ID} /opt/conda/pkgs
 
 USER ds
 RUN conda init
