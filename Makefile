@@ -8,22 +8,22 @@ help:
 # Enable BuildKit for Docker build
 export DOCKER_BUILDKIT:=1
 
-conda-install: ## Install environment.
-conda-install:
-	(conda env list | grep tsl >> /dev/null || conda env create -f tsl_env.yml) \
+define conda_c_or_u
+	(conda env list | grep tsl >> /dev/null || conda env $(1) -f tsl_env.yml) \
 	&& conda activate tsl && python setup.py install \
 	&& pip install jupyterlab==3.4.2 \
 	&& pip install ipywidgets==7.7.0 \
 	&& pip install neptune-client==0.16.3 \
 	&& jupyter nbextension enable --py widgetsnbextension
+endef
+
+conda-install: ## Install environment.
+conda-install:
+	$(call conda_c_or_u,create)
 
 conda-update: ## Update conda environment.
 conda-update:
-	(conda env list | grep tsl >> /dev/null || conda env update -f tsl_env.yml) \
-	&& conda activate tsl && python setup.py install \
-	&& pip install jupyterlab \
-	&& pip install ipywidgets \
-	&& jupyter nbextension enable --py widgetsnbextension
+	$(call conda_c_or_u,update)
 
 conda-remove: ## Remove conda environment.
 conda-remove:
@@ -68,7 +68,8 @@ test-imputation: $(CFG_IMPUTATION_TEST)
 	&& conda activate tsl \
 	&& python $(IMPUTATION) \
 	--epochs 1 \
-	--dataset-name mair \
+	--dataset-name mair36 \
 	--config test.yaml \
 	--neptune-logger \
+	--workers 16 \
 # 	&& export CUDA_VISIBLE_DEVICES = "" \
