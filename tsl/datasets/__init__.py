@@ -2,6 +2,7 @@
 from .prototypes import Dataset, PandasDataset
 # Datasets
 from .air_quality import AirQuality
+from .mair_quality import MAirQuality
 from .elergone import Elergone
 from .metr_la import MetrLA
 from .pems_bay import PemsBay
@@ -11,6 +12,7 @@ __all__ = [
     'Dataset',
     'PandasDataset',
     'AirQuality',
+    'MAirQuality',
     'Elergone',
     'MetrLA',
     'PemsBay',
