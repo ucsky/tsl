@@ -12,8 +12,9 @@ conda-install: ## Install environment.
 conda-install:
 	(conda env list | grep tsl >> /dev/null || conda env create -f tsl_env.yml) \
 	&& conda activate tsl && python setup.py install \
-	&& pip install jupyterlab \
-	&& pip install ipywidgets \
+	&& pip install jupyterlab==3.4.2 \
+	&& pip install ipywidgets==7.7.0 \
+	&& pip install neptune-client==0.16.3 \
 	&& jupyter nbextension enable --py widgetsnbextension
 
 conda-update: ## Update conda environment.
@@ -42,7 +43,6 @@ docker-build:
 	--build-arg GROUP_ID=$$(id -g $$USER) \
 	--tag $(DOCKER_INAME) . 
 
-
 DOCKER_CNAME:=tsl
 docker-run-it: ## Run docker image.
 docker-run-it:
@@ -53,11 +53,22 @@ docker-run-it:
 	--name $(DOCKER_CNAME)  $(DOCKER_INAME)
 
 IMPUTATION:=examples/imputation/run_imputation.py
+CFG_IMPUTATION_GRIN:=examples/imputation/config/grin.yaml
+CFG_IMPUTATION_TEST:=examples/imputation/config/test.yaml
 
-
+$(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
+	cat $< \
+	| yq '.batch_size = 4' \
+	| yq '.epochs = 1' \
+	| yq '.batches_per_epoch = 4' \
+	> $@
 test-imputation: ## Testing imputation.
-test-imputation:
+test-imputation: $(CFG_IMPUTATION_TEST)
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
-	&& python $(IMPUTATION) --epochs 1 --dataset-name mair --config test.yaml
+	&& python $(IMPUTATION) \
+	--epochs 1 \
+	--dataset-name mair \
+	--config test.yaml \
+	--neptune-logger \
 # 	&& export CUDA_VISIBLE_DEVICES = "" \
