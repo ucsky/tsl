@@ -141,3 +141,5 @@ dmypy.json
 
 # emacs backup files
 *~
+
+/tsl_config.yaml
