@@ -9,7 +9,11 @@ USER root
 RUN apt-get update && apt-get -y install emacs make
 
 WORKDIR /workdir
-COPY . /workdir
+COPY Makefile /workdir/Makefile
+COPY setup.py /workdir/setup.py
+COPY tsl /workdir/tsl
+COPY tsl_env.yml /workdir/tsl_env.yml
+COPY tsl_config.yml /workdir/tsl_config.yml
 
 ARG USER_ID
 ARG GROUP_ID
