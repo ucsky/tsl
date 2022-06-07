@@ -156,7 +156,8 @@ class MAirQuality(PandasDataset, MissingValuesMixin):
         dist = np.load(os.path.join(self.root_dir, 'aqi_dist.npy'))
         if self.small:
             path = os.path.join(self.root_dir, 'small36.h5')
-            eval_mask = pd.read_hdf(path, 'eval_mask')
+            #eval_mask = pd.read_hdf(path, 'eval_mask')
+            eval_mask = None
             dist = dist[:36, :36]
         else:
             path = os.path.join(self.root_dir, 'full437.h5')
