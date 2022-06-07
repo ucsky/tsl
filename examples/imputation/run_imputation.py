@@ -24,7 +24,8 @@ from tsl.data.imputation_stds import ImputationDataset
 from tsl.data.preprocessing import StandardScaler
 from tsl.datasets import (AirQuality,
                           MetrLA,
-                          PemsBay)
+                          PemsBay,
+                          MAirQuality)
 from tsl.imputers import Imputer
 from tsl.nn.metrics.metrics import MaskedMAE, MaskedMAPE, MaskedMSE, MaskedMRE
 from tsl.nn.models.imputation import (RNNImputerModel,
@@ -55,6 +56,8 @@ def get_model_class(model_str):
 def get_dataset(dataset_name: str, p_fault=0., p_noise=0.):
     if dataset_name.startswith('air'):
         return AirQuality(impute_nans=True, small=dataset_name[3:] == '36')
+    if dataset_name.startswith('mair'):
+        return MAirQuality(impute_nans=True, small=dataset_name[3:] == '36')
     if dataset_name.endswith('_point'):
         p_fault, p_noise = 0., 0.25
         dataset_name = dataset_name[:-6]
