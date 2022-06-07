@@ -8,9 +8,17 @@ help:
 # Enable BuildKit for Docker build
 export DOCKER_BUILDKIT:=1
 
-conda-install: ## Install.
+conda-install: ## Install environment.
 conda-install:
 	(conda env list | grep tsl >> /dev/null || conda env create -f tsl_env.yml) \
+	&& conda activate tsl && python setup.py install \
+	&& pip install jupyterlab \
+	&& pip install ipywidgets \
+	&& jupyter nbextension enable --py widgetsnbextension
+
+conda-update: ## Update conda environment.
+conda-update:
+	(conda env list | grep tsl >> /dev/null || conda env update -f tsl_env.yml) \
 	&& conda activate tsl && python setup.py install \
 	&& pip install jupyterlab \
 	&& pip install ipywidgets \
@@ -51,5 +59,5 @@ test-imputation: ## Testing imputation.
 test-imputation:
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
-	&& python $(IMPUTATION) --epochs 1 --dataset-name air36
+	&& python $(IMPUTATION) --epochs 1 --dataset-name mair --config test.yaml
 # 	&& export CUDA_VISIBLE_DEVICES = "" \
