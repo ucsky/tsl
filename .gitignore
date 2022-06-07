@@ -142,4 +142,8 @@ dmypy.json
 # emacs backup files
 *~
 
+# Additional configuration like token
 /tsl_config.yaml
+
+# Neptune AI log dir
+/.neptune
