@@ -18,7 +18,7 @@ define conda_c_or_u
 endef
 
 
-tsl_config.yml: Makefile
+tsl_config.yaml: Makefile
 	touch $@ \
 	&& echo "neptune_token: $$NEPTUNE_API_TOKEN" >> $@ \
 	&& echo "neptune_username: $$NEPTUNE_API_USERNAME" >> $@
@@ -43,7 +43,7 @@ conda-startlab:
 
 DOCKER_INAME:=tsl
 docker-build: ## Build docker image.
-docker-build: tsl_config.yml
+docker-build: tsl_config.yaml
 	docker build \
 	--build-arg USER_ID=$$(id -u $$USER) \
 	--build-arg GROUP_ID=$$(id -g $$USER) \
@@ -71,7 +71,8 @@ $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	> $@
 test-imputation: ## Testing imputation.
 test-imputation: $(CFG_IMPUTATION_TEST)
-	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
+	if [ ! -f  tsl_config.yaml ];then make tsl_config.yaml;fi \
+	&& export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
 	&& python $(IMPUTATION) \
 	--epochs 1 \
