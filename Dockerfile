@@ -15,6 +15,7 @@ COPY tsl /workdir/tsl
 COPY tsl_env.yml /workdir/tsl_env.yml
 COPY tsl_config.yml /workdir/tsl_config.yml
 COPY README.md /workdir/README.md
+COPY examples /workdir/examples
 
 ARG USER_ID
 ARG GROUP_ID
