@@ -30,6 +30,11 @@ RUN chown ${USER_ID}:${GROUP_ID} /opt/conda/envs/.conda_envs_dir_test
 RUN mkdir -p /opt/conda/pkgs
 #RUN touch /opt/conda/pkgs/urls.txt && chown ${USER_ID}:${GROUP_ID} /opt/conda/pkgs/urls.txt
 RUN chown -R ${USER_ID}:${GROUP_ID} /opt/conda/pkgs
+RUN VERSION=v4.25.2 \
+    && BINARY=yq_linux_386 \
+    && wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq \
+    && chmod +x /usr/bin/yq
+
 
 USER ds
 RUN conda init
