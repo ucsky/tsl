@@ -17,6 +17,12 @@ define conda_c_or_u
 	&& jupyter nbextension enable --py widgetsnbextension
 endef
 
+
+tsl_config.yml: Makefile
+	touch $@ \
+	&& echo "neptune_token: $$NEPTUNE_API_TOKEN" >> $@ \
+	&& echo "neptune_username: $$NEPTUNE_API_USERNAME" >> $@
+
 conda-install: ## Install environment.
 conda-install:
 	$(call conda_c_or_u,create)
@@ -37,7 +43,7 @@ conda-startlab:
 
 DOCKER_INAME:=tsl
 docker-build: ## Build docker image.
-docker-build:
+docker-build: tsl_config.yml
 	docker build \
 	--build-arg USER_ID=$$(id -u $$USER) \
 	--build-arg GROUP_ID=$$(id -g $$USER) \
@@ -49,9 +55,10 @@ docker-run-it:
 	docker run \
 	-it \
 	--entrypoint /bin/bash \
-	--rm  -v `pwd`:/workdir \
+	--rm  \
 	--name $(DOCKER_CNAME)  $(DOCKER_INAME)
-
+# 	-v `pwd`:/workdir \
+#
 IMPUTATION:=examples/imputation/run_imputation.py
 CFG_IMPUTATION_GRIN:=examples/imputation/config/grin.yaml
 CFG_IMPUTATION_TEST:=examples/imputation/config/test.yaml
@@ -63,7 +70,7 @@ $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	| yq '.batches_per_epoch = 4' \
 	> $@
 test-imputation: ## Testing imputation.
-test-imputation: $(CFG_IMPUTATION_TEST)
+test-imputation: $(CFG_IMPUTATION_TEST) tsl_config.yml
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
 	&& python $(IMPUTATION) \

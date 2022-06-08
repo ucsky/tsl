@@ -14,6 +14,7 @@ COPY setup.py /workdir/setup.py
 COPY tsl /workdir/tsl
 COPY tsl_env.yml /workdir/tsl_env.yml
 COPY tsl_config.yml /workdir/tsl_config.yml
+COPY README.md /workdir/README.md
 
 ARG USER_ID
 ARG GROUP_ID
