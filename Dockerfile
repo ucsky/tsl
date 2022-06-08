@@ -13,7 +13,7 @@ COPY Makefile /workdir/Makefile
 COPY setup.py /workdir/setup.py
 COPY tsl /workdir/tsl
 COPY tsl_env.yml /workdir/tsl_env.yml
-COPY tsl_config.yml /workdir/tsl_config.yml
+COPY tsl_config.yaml /workdir/tsl_config.yaml
 COPY README.md /workdir/README.md
 COPY examples /workdir/examples
 
