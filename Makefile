@@ -56,8 +56,8 @@ docker-run-it:
 	-it \
 	--entrypoint /bin/bash \
 	--rm  \
+	-v `pwd`:/workdir \
 	--name $(DOCKER_CNAME)  $(DOCKER_INAME)
-# 	-v `pwd`:/workdir \
 #
 IMPUTATION:=examples/imputation/run_imputation.py
 CFG_IMPUTATION_GRIN:=examples/imputation/config/grin.yaml
