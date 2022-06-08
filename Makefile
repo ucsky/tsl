@@ -70,7 +70,7 @@ $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	| yq '.batches_per_epoch = 4' \
 	> $@
 test-imputation: ## Testing imputation.
-test-imputation: $(CFG_IMPUTATION_TEST) tsl_config.yml
+test-imputation: $(CFG_IMPUTATION_TEST)
 	export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
 	&& python $(IMPUTATION) \
