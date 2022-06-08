@@ -147,3 +147,6 @@ dmypy.json
 
 # Neptune AI log dir
 /.neptune
+
+# User config
+/tsl_config.yml
