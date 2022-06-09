@@ -57,6 +57,7 @@ docker-run-it:
 	--entrypoint /bin/bash \
 	--rm  \
 	-v `pwd`:/workdir \
+	--shm-size=4gb \
 	--name $(DOCKER_CNAME)  $(DOCKER_INAME)
 #
 IMPUTATION:=examples/imputation/run_imputation.py
