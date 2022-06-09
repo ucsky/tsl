@@ -70,14 +70,15 @@ $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	| yq '.epochs = 1' \
 	| yq '.batches_per_epoch = 4' \
 	> $@
+# -m cProfile -o output.pstats
 test-imputation: ## Testing imputation.
 test-imputation: $(CFG_IMPUTATION_TEST)
 	if [ ! -f  tsl_config.yaml ];then make tsl_config.yaml;fi \
 	&& export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
-	&& python $(IMPUTATION) \
+	&& python -m pdb $(IMPUTATION) \
 	--epochs 1 \
-	--dataset-name mair36 \
+	--dataset-name re_small \
 	--config test.yaml \
 	--neptune-logger \
 	--workers 16 \
