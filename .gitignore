@@ -148,3 +148,4 @@ dmypy.json
 # Neptune AI log dir
 /.neptune
 
+/core
