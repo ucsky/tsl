@@ -39,6 +39,8 @@ from tsl.utils import TslExperiment, ArgParser, parser_utils, numpy_metrics
 from tsl.utils.neptune_utils import TslNeptuneLogger
 from tsl.utils.parser_utils import str_to_bool
 
+from tsl.utils.postprocessing import tensor_to_df
+
 tsl.config.config_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                     'config')
 
@@ -302,7 +304,8 @@ def run_experiment(args):
     res = dict(test_mae=numpy_metrics.masked_mae(y_hat, y_true, mask),
                test_mre=numpy_metrics.masked_mre(y_hat, y_true, mask),
                test_mape=numpy_metrics.masked_mape(y_hat, y_true, mask))
-
+    #df_test = tensor_to_df(y_hat, dm.index[dm.test_slice], dataset.df.columns)
+    
     output = trainer.predict(imputer, dataloaders=dm.val_dataloader())
     output = casting.numpy(output)
     y_hat, y_true, mask = output['y_hat'], \
@@ -311,6 +314,19 @@ def run_experiment(args):
     res.update(dict(val_mae=numpy_metrics.masked_mae(y_hat, y_true, mask),
                     val_mre=numpy_metrics.masked_mre(y_hat, y_true, mask),
                     val_mape=numpy_metrics.masked_mape(y_hat, y_true, mask)))
+    #df_val = tensor_to_df(y_hat, dm.index[dm.val_slice], dataset.df.columns)
+
+    output = trainer.predict(imputer, dataloaders=dm.train_dataloader())
+    output = casting.numpy(output)
+    y_hat, y_true, mask = output['y_hat'], \
+                          output['y'], \
+                          output['mask']
+    res.update(dict(train_mae=numpy_metrics.masked_mae(y_hat, y_true, mask),
+                    train_mre=numpy_metrics.masked_mre(y_hat, y_true, mask),
+                    train_mape=numpy_metrics.masked_mape(y_hat, y_true, mask)))
+    #df_train = tensor_to_df(y_hat, dm.index[dm.train_slice], dataset.df.columns)
+    
+    
     if args.neptune_logger:
         logger.finalize('success')
     return tsl.logger.info(res)
