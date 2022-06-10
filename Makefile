@@ -71,8 +71,8 @@ CFG_IMPUTATION_TEST:=examples/imputation/config/test.yaml
 #
 $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	cat $< \
-	| yq '.window = 1' \
-	| yq '.epochs = 4' \
+	| yq '.window = 2' \
+	| yq '.epochs = 2' \
 	| yq '.batches_per_epoch = 8' \
 	| yq '.batch_size = 2' \
 	> $@
