@@ -62,14 +62,21 @@ docker-run-it:
 #
 IMPUTATION:=examples/imputation/run_imputation.py
 CFG_IMPUTATION_GRIN:=examples/imputation/config/grin.yaml
+CFG_IMPUTATION_RNNI:=examples/imputation/config/rnni.yaml
 CFG_IMPUTATION_TEST:=examples/imputation/config/test.yaml
 
+#	| yq '.hidden_size = 1' \
+#	| yq '.ff_size = 2' \
+
+#
 $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	cat $< \
-	| yq '.batch_size = 4' \
-	| yq '.epochs = 1' \
-	| yq '.batches_per_epoch = 4' \
+	| yq '.window = 1' \
+	| yq '.epochs = 4' \
+	| yq '.batches_per_epoch = 8' \
+	| yq '.batch_size = 2' \
 	> $@
+
 # -m cProfile -o output.pstats
 test-imputation: ## Testing imputation.
 test-imputation: $(CFG_IMPUTATION_TEST)
@@ -77,9 +84,11 @@ test-imputation: $(CFG_IMPUTATION_TEST)
 	&& export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
 	&& python $(IMPUTATION) \
-	--epochs 1 \
 	--dataset-name re_small \
 	--config test.yaml \
 	--neptune-logger \
 	--workers 16 \
-# 	&& export CUDA_VISIBLE_DEVICES = "" \
+# 	
+#	&& export CUDA_LAUNCH_BLOCKING=1 \
+#	&& export CUDA_VISIBLE_DEVICES="" \
+#
