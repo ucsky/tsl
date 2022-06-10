@@ -149,3 +149,4 @@ dmypy.json
 /.neptune
 
 /core
+/output.pstats
