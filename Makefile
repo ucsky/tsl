@@ -76,7 +76,7 @@ test-imputation: $(CFG_IMPUTATION_TEST)
 	if [ ! -f  tsl_config.yaml ];then make tsl_config.yaml;fi \
 	&& export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python \
 	&& conda activate tsl \
-	&& python -m pdb $(IMPUTATION) \
+	&& python $(IMPUTATION) \
 	--epochs 1 \
 	--dataset-name re_small \
 	--config test.yaml \

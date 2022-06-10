@@ -95,7 +95,7 @@ class RealEstateSplitter(Splitter):
 
 class RealEstate(PandasDataset, MissingValuesMixin):
     """ RealEstate Prices """
-    url = os.getenv('TSL_URL_DATA_SMALL')
+    url = os.environ['TSL_URL_DATA_SMALL']
     similarity_options = {'distance'}
     temporal_aggregation_options = {'mean', 'nearest'}
     spatial_aggregation_options = {'mean'}
