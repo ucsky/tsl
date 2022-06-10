@@ -1,5 +1,5 @@
 from typing import Union
-
+from pdb import set_trace as bp
 import pandas as pd
 import pandas.tseries.frequencies as pd_freq
 
@@ -34,6 +34,7 @@ def to_channels_columns(df: pd.DataFrame,
 
 def cast_df(df: pd.DataFrame, precision: Union[int, str] = 32,
             inplace: bool = True) -> pd.DataFrame:
+
     if isinstance(precision, str):
         precision = dict(half=16, full=32, double=64).get(precision)
     assert precision in [16, 32, 64], \
@@ -44,6 +45,7 @@ def cast_df(df: pd.DataFrame, precision: Union[int, str] = 32,
     # float to float{precision}
     to_dtype = f'float{precision}'
     from_dtypes = {'float16', 'float32', 'float64'}.difference({to_dtype})
+    bp()
     float_cols = df.select_dtypes(include=from_dtypes).columns
     df.loc[:, float_cols] = df[float_cols].astype(to_dtype)
     # int to int{precision}
