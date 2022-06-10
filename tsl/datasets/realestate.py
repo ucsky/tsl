@@ -67,9 +67,10 @@ class RealEstateSplitter(Splitter):
         self.test_months = test_months
 
     def fit(self, dataset):
-        nontest_idxs, test_idxs = disjoint_months(dataset,
-                                                  months=self.test_months,
-                                                  synch_mode=HORIZON)
+        nontest_idxs, test_idxs = disjoint_months(
+            dataset,
+            months=self.test_months,
+            synch_mode=HORIZON)
         # take equal number of samples before each month of testing
         val_len = self._val_len
         if val_len < 1:
@@ -82,20 +83,26 @@ class RealEstateSplitter(Splitter):
         if len(end_month_idxs) < len(self.test_months):
             end_month_idxs = np.insert(end_month_idxs, 0, test_idxs[0])
         # expand month indices
-        month_val_idxs = [np.arange(v_idx - val_len, v_idx) - dataset.window
-                          for v_idx in end_month_idxs]
+        month_val_idxs = [
+            np.arange(v_idx - val_len, v_idx) - dataset.window
+            for v_idx in end_month_idxs
+        ]
         val_idxs = np.concatenate(month_val_idxs) % len(dataset)
         # remove overlapping indices from training set
-        ovl_idxs, _ = dataset.overlapping_indices(nontest_idxs, val_idxs,
-                                                  synch_mode=HORIZON,
-                                                  as_mask=True)
+        ovl_idxs, _ = dataset.overlapping_indices(
+            nontest_idxs,
+            val_idxs,
+
+            synch_mode=HORIZON,
+            as_mask=True
+        )
         train_idxs = nontest_idxs[~ovl_idxs]
         self.set_indices(train_idxs, val_idxs, test_idxs)
 
 
 class RealEstate(PandasDataset, MissingValuesMixin):
     """ RealEstate Prices """
-    url = os.environ['TSL_URL_DATA_SMALL']
+
     similarity_options = {'distance'}
     temporal_aggregation_options = {'mean', 'nearest'}
     spatial_aggregation_options = {'mean'}
@@ -108,8 +115,15 @@ class RealEstate(PandasDataset, MissingValuesMixin):
             test_months: Sequence = (3, 6, 9, 12),
             infer_eval_from: str = 'next',
             freq: Optional[str] = None,
-            masked_sensors: Optional[Sequence] = None
+            masked_sensors: Optional[Sequence] = None,
+            max_nodes: Optional[int] = 500
     ):
+        if small:
+            url = os.environ['TSL_URL_DATA_SMALL']
+        else:
+            url = os.environ['TSL_URL_DATA']
+        self.max_nodes = max_nodes
+        self.url = url
         self.root = root
         self.small = small
         self.test_months = test_months
@@ -145,6 +159,15 @@ class RealEstate(PandasDataset, MissingValuesMixin):
         path = download_url(self.url, self.root_dir, 'data.zip')
         extract_zip(path, self.root_dir)
         os.unlink(path)
+        
+    def give_good_nodes(self, path):
+        places = pd.read_hdf(path, 'places')
+        places.dropna(subset=['LIE_latitude', 'LIE_longitude'], inplace=True)
+        nodes_in_places = places.LIE_id.unique().tolist()
+        df = pd.read_hdf(path, 'main', start=0, stop=0)
+        nodes_in_main = df.columns.get_level_values(0).unique().tolist()
+        good_nodes = sorted(list(set(nodes_in_places) & set(nodes_in_main)))
+        return good_nodes
 
     def build(self):
         self.maybe_download()
@@ -156,6 +179,10 @@ class RealEstate(PandasDataset, MissingValuesMixin):
         places = pd.DataFrame(pd.read_hdf(path, 'places')[['LIE_id', 'LIE_latitude',  'LIE_longitude']])\
             .rename(columns={'LIE_id': 'places_id', 'LIE_latitude': 'latitude',  'LIE_longitude': 'longitude'})\
             .set_index('places_id')
+        good_nodes = self.give_good_nodes(path)
+        if self.max_nodes:
+            good_nodes = good_nodes[0:self.max_nodes+1]
+        places = places[places.index.isin(good_nodes)]
         st_coord = places.loc[:, ['latitude', 'longitude']]
         dist = geographical_distance(st_coord, to_rad=True).values
         np.save(os.path.join(self.root_dir, 're_dist.npy'), dist)
@@ -168,9 +195,16 @@ class RealEstate(PandasDataset, MissingValuesMixin):
             path = os.path.join(self.root_dir, 'mvmdts_20200101-20220101-t3000000-m20_small.h5')
         else:
             path = os.path.join(self.root_dir, 'mvmdts_20200101-20220101-t3000000-m20.h5')
+        good_nodes = self.give_good_nodes(path)
+        if self.max_nodes:
+            good_nodes = good_nodes[0:self.max_nodes+1]
         df = pd.read_hdf(path, 'main')
+        l_cols = df.columns[df.columns.get_level_values(0).isin(good_nodes)]
+        df = df[l_cols]
+        df = df.astype("float32")
         return pd.DataFrame(df), dist, eval_mask
 
+    
     def load(self, impute_nans=True):
         # load readings and places metadata
         df, dist, eval_mask = self.load_raw()
