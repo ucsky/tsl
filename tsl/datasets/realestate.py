@@ -144,7 +144,6 @@ class RealEstate(PandasDataset, MissingValuesMixin):
             default_splitting_method='air_quality',
             name='RES' if self.small else 'RE'
         )
-        print("h")
         self.set_eval_mask(eval_mask)
 
     @property

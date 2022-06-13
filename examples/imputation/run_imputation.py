@@ -178,6 +178,7 @@ def run_experiment(args):
                                       precision=args.precision)
 
     scalers = {'data': StandardScaler(axis=(0, 1))}
+
     splitter = dataset.get_splitter(val_len=args.val_len,
                                     test_len=args.test_len)
     dm = SpatioTemporalDataModule(
@@ -304,7 +305,7 @@ def run_experiment(args):
     res = dict(test_mae=numpy_metrics.masked_mae(y_hat, y_true, mask),
                test_mre=numpy_metrics.masked_mre(y_hat, y_true, mask),
                test_mape=numpy_metrics.masked_mape(y_hat, y_true, mask))
-    #df_test = tensor_to_df(y_hat, dm.index[dm.test_slice], dataset.df.columns)
+    df_test = tensor_to_df(y_hat, dm.index[dm.test_slice], dataset.df.columns)
     
     output = trainer.predict(imputer, dataloaders=dm.val_dataloader())
     output = casting.numpy(output)
