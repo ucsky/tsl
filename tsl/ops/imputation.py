@@ -114,8 +114,12 @@ def prediction_dataframe(y, index, columns=None, aggregate_by='mean'):
     - `smooth_central`: average the predictions weighted by a gaussian signal with std=1
     @return: pd.DataFrame df: the evaluation mask for the DataFrame
     """
-    dfs = [pd.DataFrame(data=data.reshape(data.shape[:2]), index=idx,
-                        columns=columns) for data, idx in zip(y, index)]
+    dfs = [
+        pd.DataFrame(
+            data=data.reshape(data.shape[0], data.shape[1]*data.shape[2]),
+            index=idx,
+            columns=columns)
+        for data, idx in zip(y, index)]
     df = pd.concat(dfs)
     preds_by_step = df.groupby(df.index)
     # aggregate according passed methods
