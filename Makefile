@@ -61,6 +61,15 @@ docker-run-it:
 	--name $(DOCKER_CNAME)  $(DOCKER_INAME)
 #
 IMPUTATION:=examples/imputation/run_imputation.py
+
+install-yq: ## Installing yq
+install-yq:
+	echo "Installing yq as defined in https://github.com/mikefarah/yq/ ..." \
+	&& BINARY=yq_linux_amd64 \
+	&& VERSION=v4.25.3 \
+	&& wget https://github.com/mikefarah/yq/releases/download/$${VERSION}/$${BINARY}.tar.gz -O - | tar xz \
+	&& sudo mv $${BINARY} /usr/bin/yq
+
 CFG_IMPUTATION_GRIN:=examples/imputation/config/grin.yaml
 CFG_IMPUTATION_RNNI:=examples/imputation/config/rnni.yaml
 CFG_IMPUTATION_TEST:=examples/imputation/config/test.yaml
