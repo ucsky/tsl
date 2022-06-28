@@ -96,7 +96,7 @@ test-imputation: $(CFG_IMPUTATION_TEST)
 	--dataset-name re \
 	--config test.yaml \
 	--workers 8 \
-#	--neptune-logger \
+	--neptune-logger \
 #	&& export CUDA_LAUNCH_BLOCKING=1 \
 #	&& export CUDA_VISIBLE_DEVICES="" \
 # -m cProfile -o output.pstats
