@@ -148,7 +148,10 @@ class RealEstate(PandasDataset, MissingValuesMixin):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['mvmdts_20200101-20220101-t3000000-m20.h5', 'mvmdts_20200101-20220101-t3000000-m20_small.h5']
+        if self.small:
+            return ['mvmdts_20200101-20220101-t3000000-m20_small.h5']
+        else:
+            return ['mvmdts_20200101-20220101-t3000000-m20.h5']
 
     @property
     def required_file_names(self) -> List[str]:
