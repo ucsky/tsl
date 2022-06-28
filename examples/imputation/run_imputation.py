@@ -278,7 +278,7 @@ def run_experiment(args):
     trainer = pl.Trainer(max_epochs=args.epochs,
                          default_root_dir=logdir,
                          logger=logger,
-                         gpus=1 if torch.cuda.is_available() else None,
+                         gpus=-1 if torch.cuda.is_available() else None,
                          gradient_clip_val=args.grad_clip_val,
                          limit_train_batches=args.batches_per_epoch,
                          callbacks=[early_stop_callback, checkpoint_callback])
