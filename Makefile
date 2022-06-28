@@ -74,9 +74,6 @@ CFG_IMPUTATION_GRIN:=examples/imputation/config/grin.yaml
 CFG_IMPUTATION_RNNI:=examples/imputation/config/rnni.yaml
 CFG_IMPUTATION_TEST:=examples/imputation/config/test.yaml
 
-#	| yq '.hidden_size = 1' \
-#	| yq '.ff_size = 2' \
-
 #
 $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	cat $< \
@@ -84,9 +81,12 @@ $(CFG_IMPUTATION_TEST): $(CFG_IMPUTATION_GRIN) Makefile
 	| yq '.epochs = 10' \
 	| yq '.batches_per_epoch = 8' \
 	| yq '.batch_size = 2' \
+	| yq '.hidden_size = 8' \
+	| yq '.ff_size = 8' \
+	| yq '.embedding_size = 4' \
 	> $@
 
-# -m cProfile -o output.pstats
+#
 test-imputation: ## Testing imputation.
 test-imputation: $(CFG_IMPUTATION_TEST)
 	if [ ! -f  tsl_config.yaml ];then make tsl_config.yaml;fi \
@@ -95,9 +95,9 @@ test-imputation: $(CFG_IMPUTATION_TEST)
 	&& python $(IMPUTATION) \
 	--dataset-name re \
 	--config test.yaml \
-	--neptune-logger \
-	--workers 16 \
-# 	
+	--workers 8 \
+#	--neptune-logger \
 #	&& export CUDA_LAUNCH_BLOCKING=1 \
 #	&& export CUDA_VISIBLE_DEVICES="" \
+# -m cProfile -o output.pstats
 #

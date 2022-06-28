@@ -274,7 +274,7 @@ def run_experiment(args):
         monitor='val_mae',
         mode='min',
     )
-
+    #                         
     trainer = pl.Trainer(max_epochs=args.epochs,
                          default_root_dir=logdir,
                          logger=logger,
@@ -282,7 +282,11 @@ def run_experiment(args):
                          gradient_clip_val=args.grad_clip_val,
                          limit_train_batches=args.batches_per_epoch,
                          callbacks=[early_stop_callback, checkpoint_callback])
-
+    #                          
+    #                          accelerator="gpu",
+    #                          devices=2,
+    #                          strategy="dp",
+# 
     trainer.fit(imputer,
                 train_dataloaders=dm.train_dataloader(),
                 val_dataloaders=dm.val_dataloader())
