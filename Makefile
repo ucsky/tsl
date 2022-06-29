@@ -101,3 +101,9 @@ test-imputation: $(CFG_IMPUTATION_TEST)
 #	&& export CUDA_VISIBLE_DEVICES="" \
 # -m cProfile -o output.pstats
 #
+clean: ## Cleaning.
+clean:
+	rm -rf tsl/.storage \
+	&& rm -rf log/imputation \
+#
+
