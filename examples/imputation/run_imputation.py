@@ -62,7 +62,7 @@ def get_dataset(dataset_name: str, p_fault=0., p_noise=0.):
     if dataset_name.startswith('mair'):
         return MAirQuality(impute_nans=True, small=dataset_name[4:] == '36')
     if dataset_name.startswith('re'):
-        return RealEstate(impute_nans=True, small=dataset_name[3:] == 'small', max_nodes=2000)
+        return RealEstate(impute_nans=True, small=dataset_name[3:] == 'small', max_nodes=100)
     if dataset_name.endswith('_point'):
         p_fault, p_noise = 0., 0.25
         dataset_name = dataset_name[:-6]
@@ -278,7 +278,7 @@ def run_experiment(args):
     trainer = pl.Trainer(max_epochs=args.epochs,
                          default_root_dir=logdir,
                          logger=logger,
-                         gpus=1 if torch.cuda.is_available() else None,
+                         gpus=-1 if torch.cuda.is_available() else None,
                          gradient_clip_val=args.grad_clip_val,
                          limit_train_batches=args.batches_per_epoch,
                          callbacks=[early_stop_callback, checkpoint_callback])
